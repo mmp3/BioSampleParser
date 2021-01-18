@@ -1,18 +1,37 @@
+'Biosample parser.
+
+Usage:
+  Biosample_parser.R [options] <query>  <output>
+
+Options:
+    -f=<file>  filename of local XML file containing Biosample data fetched from Entrez. If not provided, then will fetch automatically from NCBI.
+
+Arguments:
+    query  character, ENA ID or NCBI BioProject ID for the study of interest
+    output filename to which a TSV-formatted file will be written containing the parsed metadata from the Biosample entries.
+'  ->  doc
+
+library(docopt)
+args <- docopt(doc, version = 'Biosample parser')
+#print(args)
+
+filePath  <-  args$f
+
 # BioSampleParser converts metadata, obtained from NCBI Biosample in xml format, to a 
 # more easily interpretable tabular format, i.e. data frame object or .tsv file. 
 # This also allows the user to easily use the metadata for further processinginstall.packages("rentrez").
-BioSampleParser = function(query = NULL, filePath = NULL, file.tsv = NULL){
+#BioSampleParser = function(query = NULL, filePath = NULL, file.tsv = NULL){
   
   require(xml2)
   require(rentrez)
   
   if (is.null(filePath)) {
-    if (is.null(query)){
+    if (is.null(args$query)){
       warning("Please specify either a NCBI BioProject query or a path to a BioSample .xml file")
       return(NULL)
     }
     # Query NCBI BioProject for identifier
-    EntrezResult = entrez_search(db="bioproject", term = query)
+    EntrezResult = entrez_search(db="bioproject", term = args$query)
     BioProjectID = EntrezResult$ids
     if (length(BioProjectID) == 0){
       warning("NCBI BioProject found zero hits for the specified query")
@@ -29,8 +48,7 @@ BioSampleParser = function(query = NULL, filePath = NULL, file.tsv = NULL){
     meta_xml = entrez_fetch(db="biosample", id = BioSampleList, rettype = "xml")
     # Read queried xml file
     meta = read_xml(meta_xml)
-  }
-  else {
+  } else {
     # Read xml file from path
     meta = read_xml(filePath)
   }
@@ -76,8 +94,8 @@ BioSampleParser = function(query = NULL, filePath = NULL, file.tsv = NULL){
   }
   
   # Write .csv
-  if (!is.null(file.tsv)){
-    write.table(meta_df, file = file.tsv, quote = FALSE, sep = "\t", row.names = FALSE)
+  if (!is.null(args$output)){
+    write.table(meta_df, file = args$output, quote = FALSE, sep = "\t", row.names = FALSE)
   }
-  return(meta_df)
-}
+  #return(meta_df)
+#}
