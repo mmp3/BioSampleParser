@@ -11,25 +11,26 @@ It then queries NCBI BioSample for any samples related to the study, downloads s
 
 ## Setup and Usage
 
-Donwload BioSampleParser.R and place it in your directory of choice.
 
-Run the following command in an R session to source the function:
+Install some R package dependencies:
 ``` r
-source("/path/to/BioSampleParser.R")
+install.package("xml2","rentrez","docopts")
 ```
-Call the function with the query argumnet set to your study identifier:
-``` r
-df_metadata <- BioSampleParser(query = "PRJNA397906")
-```
+
+Note that the `xml2` package may require you to install xml2 via `apt-get` in ubuntu first.
+
+Download BioSampleParser.R into a directory in PATH.
+
+Call it from the command line via Rscript. Here is an example usage:
+
+`Rscript BioSampleParser.R <query> <output>`
+
 
 ## List of all arguments
 
 query
 * character, ENA ID or NCBI BioProject ID for the study of interest
 
-filePath
-* character, path to local NCBI BioProject .xml file.
-
-file.tsv
-* character, filename for saving metadata as a .tsv file.
+output
+* filename for TSV-formatted output file.
 
